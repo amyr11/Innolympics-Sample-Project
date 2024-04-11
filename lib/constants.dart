@@ -8,3 +8,5 @@ Example of constants are:
 - Enums
 - etc.
 */
+
+const String GOOGLE_CLIENT_ID = "306375538602-q5gdbpbcvi430tdp4plku88t2dj00e3i.apps.googleusercontent.com";

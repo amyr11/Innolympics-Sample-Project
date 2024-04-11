@@ -1,7 +1,5 @@
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:go_router/go_router.dart';
-
-import 'screens/home.dart';
-import 'screens/sample.dart';
 
 /*
 This file contains all the routes used in the app. You can add more routes here and delete the /sample route.
@@ -12,11 +10,23 @@ final GoRouter router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/',
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => SignInScreen(
+        actions: [
+          AuthStateChangeAction<SignedIn>((context, _) {
+            GoRouter.of(context).pushReplacement("/profile");
+          }),
+        ],
+        showPasswordVisibilityToggle: true,
+      ),
     ),
     GoRoute(
-      path: '/sample',
-      builder: (context, state) => const SampleScreen(),
-    ),
+        path: '/profile',
+        builder: (context, state) => ProfileScreen(
+              actions: [
+                SignedOutAction((context) {
+                  GoRouter.of(context).pushReplacement("/");
+                }),
+              ],
+            )),
   ],
 );

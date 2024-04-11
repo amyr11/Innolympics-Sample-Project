@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>306375538602-k8nbiqpc6vt2bftcbb9ne6jokckm2e9m.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.306375538602-k8nbiqpc6vt2bftcbb9ne6jokckm2e9m</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>306375538602-43hr0v4quaeuamfk0fjsr2t07fvtvvbv.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDRrR1Coyvu6p0vustQe4PCAPa0f5v8ykA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>306375538602</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.flutterBoilerplate</string>
+	<key>PROJECT_ID</key>
+	<string>grocery-app-e7bb4</string>
+	<key>STORAGE_BUCKET</key>
+	<string>grocery-app-e7bb4.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:306375538602:ios:8c0caac70c03c2097b9dd3</string>
+</dict>
+</plist>
