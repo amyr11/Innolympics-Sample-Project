@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_boilerplate/screens/goal_details.dart';
+import 'package:flutter_boilerplate/screens/home.dart';
 import 'package:go_router/go_router.dart';
 
 /*
@@ -10,10 +14,24 @@ final GoRouter router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/',
+      redirect: (context, state) => FirebaseAuth.instance.currentUser != null
+          ? '/home'
+          : '/sign-in',
+    ),
+    GoRoute(
+      path: '/home',
+      builder: (context, state) => HomeScreen(),
+    ),
+    GoRoute(
+      path: '/goal/:id',
+      builder: (context, state) => GoalDetailsScreen(id: state.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '/sign-in',
       builder: (context, state) => SignInScreen(
         actions: [
           AuthStateChangeAction<SignedIn>((context, _) {
-            GoRouter.of(context).pushReplacement("/profile");
+            GoRouter.of(context).pushReplacement("/home");
           }),
         ],
         showPasswordVisibilityToggle: true,
@@ -22,11 +40,14 @@ final GoRouter router = GoRouter(
     GoRoute(
         path: '/profile',
         builder: (context, state) => ProfileScreen(
-              actions: [
-                SignedOutAction((context) {
-                  GoRouter.of(context).pushReplacement("/");
-                }),
-              ],
-            )),
+          appBar: AppBar(
+            title: const Text('Profile'),
+          ),
+          actions: [
+            SignedOutAction((context) {
+              GoRouter.of(context).go("/");
+            }),
+          ],
+        )),
   ],
 );

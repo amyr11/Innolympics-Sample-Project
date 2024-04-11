@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
@@ -17,6 +18,7 @@ Future main() async {
     EmailAuthProvider(),
     GoogleProvider(clientId: GOOGLE_CLIENT_ID),
   ]);
+  FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
   await SPHelper.sp.initSharedPreferences();
   await dotenv.load(fileName: ".env");
   
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Flutter Boilerplate',
+      title: 'Money Goalz',
       theme: kDarkTheme,
       routerConfig: router,
     );

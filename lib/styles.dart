@@ -5,27 +5,26 @@ This file contains all the styles and themes used in the app.
 */
 
 // Colors
-Color kPrimaryColor = Color.fromARGB(255, 8, 176, 227);
+Color kPrimaryColor = const Color.fromARGB(255, 8, 176, 227);
 
 // Fonts
-TextStyle k28BoldPrimaryColor = TextStyle(
-  fontSize: 28,
+TextStyle kTitlePrimary = TextStyle(
+  fontSize: 32,
   fontWeight: FontWeight.bold,
-  color: kPrimaryColor,
+  color: kDarkTheme.copyWith().colorScheme.primary,
 );
-TextStyle k24RegularWhite = TextStyle(
-  fontSize: 24,
-  color: Colors.white,
+TextStyle kTitle = const TextStyle(
+  fontSize: 32,
+  fontWeight: FontWeight.bold,
 );
-TextStyle k18RegularWhite = TextStyle(
+TextStyle kSubtitle = const TextStyle(
   fontSize: 18,
-  color: Colors.white,
 );
-TextStyle k16RegularWhite = TextStyle(
-  fontSize: 16,
-  color: Colors.white,
+TextStyle kLabel = TextStyle(
+  fontSize: 12,
+  color: kDarkTheme.copyWith().colorScheme.onSurfaceVariant,
+  fontWeight: FontWeight.bold,
 );
-
 // Metrics
 double kDefaultSpace = 10.0;
 
@@ -37,5 +36,5 @@ ThemeData kDarkTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: kPrimaryColor,
     brightness: kIsDarkTheme ? Brightness.dark : Brightness.light,
-    ),
+  ),
 );
