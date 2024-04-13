@@ -3,12 +3,14 @@ import 'package:flutter_boilerplate/models/goal.dart';
 import 'package:flutter_boilerplate/services/firestore_service.dart';
 import 'package:flutter_boilerplate/styles.dart';
 import 'package:flutter_boilerplate/widgets/goal_input_dialog.dart';
+import 'package:flutter_boilerplate/widgets/savings_input_dialog.dart';
 import 'package:intl/intl.dart';
 
 class GoalDetailsScreen extends StatelessWidget {
   final String id;
   final FirestoreService _firestoreService = FirestoreService();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _editFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _savingsFormKey = GlobalKey<FormState>();
 
   GoalDetailsScreen({super.key, required this.id});
 
@@ -28,141 +30,156 @@ class GoalDetailsScreen extends StatelessWidget {
 
   Widget _buildUI(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: StreamBuilder<Goal>(
-          stream: _firestoreService.streamGoal(id),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Error loading goal!');
-            }
-
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-
-            final goal = snapshot.data!;
-
-            return Column(
-              children: [
-                Column(
+      child: StreamBuilder<Goal>(
+        stream: _firestoreService.streamGoal(id),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Error loading goal!');
+          }
+      
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+      
+          final goal = snapshot.data!;
+      
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - (kToolbarHeight + kBottomNavigationBarHeight + 16),
+                child: Column(
                   children: [
-                    Text(
-                      goal.name,
-                      style: kTitlePrimary,
+                    Column(
+                      children: [
+                        Text(
+                          goal.name,
+                          style: kTitlePrimary,
+                        ),
+                        Card(
+                          margin: const EdgeInsets.only(top: 4.0),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                            child: Text(
+                              goal.category.formatName(),
+                              style: kLabel,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    Card(
-                      margin: const EdgeInsets.only(top: 4.0),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                        child: Text(
-                          goal.category.formatName(),
+                    const SizedBox(height: 48.0),
+                    Text(
+                      'Amount saved',
+                      textAlign: TextAlign.center,
+                      style: kLabel,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '₱${goal.saved.toStringAsFixed(2)}',
+                          style: kTitle,
+                        ),
+                        const SizedBox(width: 8.0),
+                        Text(
+                          '/ ₱${goal.price}',
                           style: kLabel,
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 48.0),
-                Text(
-                  'Amount saved',
-                  textAlign: TextAlign.center,
-                  style: kLabel,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                    const SizedBox(height: 24.0),
                     Text(
-                      '₱${goal.saved.toStringAsFixed(2)}',
-                      style: kTitle,
-                    ),
-                    const SizedBox(width: 8.0),
-                    Text(
-                      '/ ₱${goal.price}',
+                      'Minimum amount to save',
+                      textAlign: TextAlign.center,
                       style: kLabel,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 24.0),
-                Text(
-                  'Minimum amount to save',
-                  textAlign: TextAlign.center,
-                  style: kLabel,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '₱${goal.savingsPerFrequency.toStringAsFixed(2)}',
-                      style: kTitle,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '₱${goal.savingsPerFrequency.toStringAsFixed(2)}',
+                          style: kTitle,
+                        ),
+                        const SizedBox(width: 8.0),
+                        Text(
+                          '/ ${goal.frequency.formatName()}',
+                          style: kLabel,
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 8.0),
+                    const SizedBox(height: 24.0),
                     Text(
-                      '/ ${goal.frequency.formatName()}',
+                      'Target date',
+                      textAlign: TextAlign.center,
                       style: kLabel,
                     ),
+                    Text(
+                      DateFormat('MMMM d, y').format(goal.targetDate),
+                      style: kSubtitle,
+                    ),
+                    const Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FilledButton(
+                          onPressed: () {
+                            goalInputDialog(
+                                submitButtonLabel: 'Edit',
+                                context: context,
+                                formKey: _editFormKey,
+                                onSubmit: (name, saved, price, category, frequency, targetDate) {
+                                  Goal updatedGoal = Goal(
+                                    id: goal.id,
+                                    name: name!,
+                                    saved: saved!,
+                                    price: price!,
+                                    category: category!,
+                                    frequency: frequency!,
+                                    targetDate: targetDate!,
+                                  );
+                
+                                  _firestoreService.updateGoal(updatedGoal);
+                                },
+                                dName: goal.name,
+                                dSaved: goal.saved,
+                                dPrice: goal.price,
+                                dCategory: goal.category,
+                                dFrequency: goal.frequency,
+                                dTargetDate: goal.targetDate,
+                            );
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Theme.of(context).colorScheme.secondary),
+                          ),
+                          child: const Text('✍️ Edit'),
+                        ),
+                        const SizedBox(width: 8.0),
+                        FilledButton(
+                          onPressed: () {
+                            savingsInputDialog(
+                              context: context,
+                              formKey: _savingsFormKey,
+                              submitButtonLabel: 'Add',
+                              onSubmit: (saved) {
+                                goal.addSavings(saved!);
+                                _firestoreService.updateGoal(goal);
+                              },
+                            );
+                          },
+                          child: const Text('Add savings'),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
                   ],
                 ),
-                const SizedBox(height: 24.0),
-                Text(
-                  'Target date',
-                  textAlign: TextAlign.center,
-                  style: kLabel,
-                ),
-                Text(
-                  DateFormat('MMMM d, y').format(goal.targetDate),
-                  style: kSubtitle,
-                ),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FilledButton(
-                      onPressed: () {
-                        goalInputDialog(
-                            submitButtonLabel: 'Edit',
-                            context: context,
-                            formKey: _formKey,
-                            onSubmit: (name, saved, price, category, frequency, targetDate) {
-                              Goal updatedGoal = Goal(
-                                id: goal.id,
-                                name: name!,
-                                saved: saved!,
-                                price: price!,
-                                category: category!,
-                                frequency: frequency!,
-                                targetDate: targetDate!,
-                              );
-
-                              _firestoreService.updateGoal(updatedGoal);
-                            },
-                            dName: goal.name,
-                            dSaved: goal.saved,
-                            dPrice: goal.price,
-                            dCategory: goal.category,
-                            dFrequency: goal.frequency,
-                            dTargetDate: goal.targetDate,
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            Theme.of(context).colorScheme.secondary),
-                      ),
-                      child: const Text('✍️ Edit'),
-                    ),
-                    const SizedBox(width: 8.0),
-                    FilledButton(
-                      onPressed: () {},
-                      child: const Text('Add savings'),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-              ],
-            );
-          },
-        ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

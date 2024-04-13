@@ -5,7 +5,7 @@ import 'package:flutter_boilerplate/models/frequency.dart';
 class Goal {
   final String? id;
   final String name;
-  final double saved;
+  double saved;
   final double price;
   final Category category;
   final DateTime targetDate;
@@ -54,5 +54,9 @@ class Goal {
     int daysUntilTargetDate = targetDate.difference(DateTime.now()).inDays;
     // two decimal places
     return (price / (daysUntilTargetDate / frequency.daysInBetween));
+  }
+
+  void addSavings(double savings) {
+    saved += savings;
   }
 }
